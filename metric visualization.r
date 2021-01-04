@@ -1,7 +1,5 @@
 #Source: https://towardsdatascience.com/accessing-data-from-github-api-using-r-3633fb62cb08
 
-#Register a new application with Github and use OAuth credentials 
-
 #install.packages("jsonlite")
 library(jsonlite)
 #install.packages("httpuv")
@@ -10,10 +8,6 @@ library(httpuv)
 library(httr)
 #install.packages("plotly")
 library(plotly)
-#install.packages("ggplot2")
-library(ggplot2)
-#install.packages("devtools")
-library(devtools)
 
 # Choose application
 oauth_endpoints("github")
@@ -25,7 +19,7 @@ myapp <- oauth_app(appname = "Harry_O_Brien_CSU33012",
 github_token <- oauth2.0_token(oauth_endpoints("github"), myapp)
 
 # Use API
-gtoken <- config(token = github_token)
+gtoken <- httr::config(token = github_token)
 req <- GET("https://api.github.com/users/harryob2/repos", gtoken)
 
 # Take action on http error
@@ -40,20 +34,16 @@ gitDF = jsonlite::fromJSON(jsonlite::toJSON(json1))
 # Subset data.frame
 gitDF[gitDF$full_name == "harryob2/Biography-Assignment", "created_at"] 
 
-#When it asks you to 'enter an item from the menu, or 0 to exit'
-#The options are 1 - Yes or 2 - No to using a local file to cache oAuth credentials between R sessions
-#Please press 1
-
-########################################################################################################
+################################################################################
 
 ### Collecting & Displaying My Data
-# Get my data
+# Retrieve data
 myData = fromJSON("https://api.github.com/users/harryob2")
 
-# Display the number of followers
+# Count followers
 myData$followers
 
-# Gives user names of all my followers
+# Usernames of followers
 followers = fromJSON("https://api.github.com/users/harryob2/followers")
 followers$login
 
@@ -71,6 +61,7 @@ myData$public_repos
 repositories = fromJSON("https://api.github.com/users/harryob2/repos")
 repositories$name
 repositories$created_at
+
 
 #For this assignment I have used Fabien Potencier's Github Account - fabpot
 #I used him because I looked up famous people on Github and his was the first to come up
@@ -145,6 +136,8 @@ for(i in 1:length(user_ids))
   }
   next
 }
+
+
 
 #Plotly is a seperate SaaS website for embedding cool charts in code. It's what the economist and ft use.
 Sys.setenv("plotly_username"="harryob2")
