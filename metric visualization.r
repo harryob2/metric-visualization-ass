@@ -151,7 +151,7 @@ api_create(plot1, filename = "Repositories v Followers")
 
 ###Plot 2 - fabpot's followers' 10 most popular programming languages
 languages = c()
-
+print(paste("length of users",users))
 for (i in 1:length(users))
 {
   reposURL = paste("https://api.github.com/users/", users[i], "/repos", sep = "")
@@ -159,11 +159,12 @@ for (i in 1:length(users))
   reposContent = content(repos)
   reposDF = jsonlite::fromJSON(jsonlite::toJSON(reposContent))
   reposNames = reposDF$name
-  
+  print(paste("Current Value of i",i))
+  print(paste("length of reposNames",length(reposNames)))
   #Loop through all the repositories of an individual user
   for (j in 1: length(reposNames))
   {
-    
+    print(paste("Current Value of j",j))    
     reposURL2 = paste("https://api.github.com/repos/", users[i], "/", reposNames[j], sep = "")
     repos2 = GET(reposURL2, gtoken)
     reposContent2 = content(repos2)
@@ -176,17 +177,32 @@ for (i in 1:length(users))
     }
     next
   }
-  next
+  
 }
 #Puts 10 most popular languages in a table and barPlot
 allLanguages = sort(table(languages), increasing=TRUE)
 top10Languages = allLanguages[(length(allLanguages)-9):length(allLanguages)]
 languageDF = as.data.frame(top10Languages)
-barplotLanguages = plot_ly(data = languageDF, x = languageDF$languages, y = languageDF$Freq, type = "bar")
-barplotLanguages
+x <- list(
+  title = "Languages"
+)
+y <- list(
+  title = "No. of users"
+)
 
+barplotLanguages = plot_ly(data = languageDF, x = languageDF$languages, y = languageDF$Freq, type = "bar")
+barplotLanguages <- barplotLanguages %>% layout(xaxis = x, yaxis = y)
+barplotLanguages
+api_create(barplotLanguages, filename = "Plot 2")
 
 ###Plot3 graphs fabpot's following vs followers by year.
 plot3 = plot_ly(data = usersDB, x = usersDB$following, y = usersDB$followers, text = ~paste("Followers: ", followers, "<br>Following: ", following), color = ~dateCreated)
+x <- list(
+  title = "Following"
+)
+y <- list(
+  title = "Followers"
+)
+plot3 <- plot3 %>% layout(xaxis = x, yaxis = y)
 plot3
 api_create(plot3, filename = "Following vs Followers")
